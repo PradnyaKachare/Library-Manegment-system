@@ -14,7 +14,9 @@ namespace Library_Manegment_system.Configuration
                 try
                 {
                     SqlConnection con = new SqlConnection(connectionString);
-                    return con;
+                con.Open();
+              
+                return con;
                 }
                 catch (Exception e)
                 {
