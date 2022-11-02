@@ -14,9 +14,6 @@ namespace Library_Manegment_system.Dao
         bool DeleteBook(int bookid);
         bool UpdateBook(int id, string bknm, string anm);
         Book getBookById(int id);
-        // Book getBookByName(string bknm);
-                
-
     }
 
 }

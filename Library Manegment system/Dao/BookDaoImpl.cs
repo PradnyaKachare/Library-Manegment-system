@@ -78,7 +78,7 @@ namespace Library_Manegment_system.Dao
                         retry = Console.ReadLine();
                         break;
                 }
-            } while (retry != "No");
+            }
 
 
         }
