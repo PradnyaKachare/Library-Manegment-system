@@ -37,5 +37,10 @@ namespace Library_Manegment_system.Model
         {
             return base.ToString();
         }
+
+        internal List<Member> getAllMembers()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

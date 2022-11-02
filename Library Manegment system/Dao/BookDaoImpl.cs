@@ -6,6 +6,7 @@ using Library_Manegment_system.Configuration;
 using Library_Manegment_system.Model;
 using System.Reflection.PortableExecutable;
 using System.Net;
+using System.Security.Cryptography;
 
 namespace Library_Manegment_system.Dao
 {
@@ -20,7 +21,8 @@ namespace Library_Manegment_system.Dao
             {
                 int ch;
                 Console.WriteLine("Enter \n 1: Add Book \n 2: Get Books \n 3: Delete Book \n 4: Update Book");
-                ch = Convert.ToInt32(Console.ReadLine());
+                ch = int.Parse(Console.ReadLine());
+               
                 switch (ch)
                 {
                     case 1:
@@ -52,38 +54,63 @@ namespace Library_Manegment_system.Dao
                         break;
 
                     case 2:
-                        //Console.WriteLine("List of Book:");
+                         Console.WriteLine("List of Books");
                         List<Book> bkList = b.getAllBooks();
-                        foreach (Book c in bkList)
+                        
+                        foreach (Book list in bkList)
                         {
-                            Console.WriteLine();
+                            Console.WriteLine(list.Bookid+" "+list.BookName+ " "+list.AuthorName+ " "+list.NoOfCopies+" "+list.Price);
                         }
                         break;
 
                     case 3:
                         Console.WriteLine("Enter book id u want to delete");
                         int bookid = Convert.ToInt32(Console.ReadLine());
-                        b.DeleteBook(bookid);  
+                        b.DeleteBook(bookid);
+
+                        if (b.DeleteBook(bookid))
+                        {
+                            Console.WriteLine("Book Deleted Scuussfully!!!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Something went wrong..");
+                        }
                         break;
+
 
                     case 4:
                         Console.WriteLine("Enter book id you want update");
-                        int Bookid = Convert.ToInt32(Console.ReadLine());
-                      //  b.UpdateBook(Bookid, int id,bknm,anm);
-
+                        int id = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Enter book Name you want update");
+                        string bknm = Console.ReadLine();
+                        Console.WriteLine("Enter Author nameyou want update");
+                        string anm = Console.ReadLine();
+                        Console.WriteLine("Enter Number Of Copies you want update");
+                        int cpy = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Enter Price you want update");                         
+                        int price= Convert.ToInt32(Console.ReadLine());
+                     
+                        if (b.UpdateBook(id, bknm, anm,cpy,price))
+                        {
+                            Console.WriteLine("Book Updated Scuussfully!!!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Something went wrong..");
+                        }
                         break;
 
                     default:
                         Console.WriteLine("Would you like to retry?");
                         retry = Console.ReadLine();
-                        break;
+                        break;                   
+                        
                 }
             }
-
-
-        }
-
-       
+            while (retry != "No");
+           
+        }       
 
         public List<Book> getAllBooks()
         {
@@ -94,15 +121,20 @@ namespace Library_Manegment_system.Dao
                 using (SqlConnection con = DBConnect.GetConnection())
                 {
                     SqlCommand cmd = new SqlCommand("select * from book", con);
+                    
                     SqlDataReader r = cmd.ExecuteReader();
                     while (r.Read())
                     {
+                       // Console.WriteLine(r);
                         int bid = (int)r[0];
                         string bnm = (string)r[1];
                         string anm = (string)r[2];
                         int price = (int)r[3];
                         int copies = (int)r[4];
+                       
+                        
                         Book bk = new Book(bid, bnm, anm, price, copies);
+                       // Console.WriteLine(bk.Bookid);
                         booklist.Add(bk);
                     }
                 }
@@ -144,7 +176,7 @@ namespace Library_Manegment_system.Dao
         }
 
 
-        public bool DeleteBook(Book bk)
+        public bool DeleteBook(int bookid)
         {
             try
             {
@@ -152,7 +184,7 @@ namespace Library_Manegment_system.Dao
                 {
                     SqlCommand cmd = new SqlCommand("delete from book where Bookid=@i", con);
                   
-                    cmd.Parameters.AddWithValue("@i", bk.Bookid);
+                    cmd.Parameters.AddWithValue("@i", bookid);
                     
                     cmd.ExecuteNonQuery();
                     return true;
@@ -166,20 +198,21 @@ namespace Library_Manegment_system.Dao
             return false;
         }
 
-        public bool DeleteBook(int bookid)
-        {
-            throw new NotImplementedException();
-        }
+      
 
-
-        public bool UpdateBook(Book bk ,int id, string bknm, string anm)            
+        public bool UpdateBook(int id, string bknm, string anm,int cpy,int price)            
         {
             try
             {
                 using (SqlConnection con = DBConnect.GetConnection())
                 {
-                    SqlCommand cmd = new SqlCommand("update  book where Bookid=@i", con);
-                     cmd.Parameters.AddWithValue("@i", bk.Bookid);
+                    SqlCommand cmd = new SqlCommand("UPDATE Book \r\nSET BookName = @bknm, Authorname = @anm,noOfCopies=@cpy,price=@price Where bookid = @id  ", con);
+                  
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@bknm", bknm);
+                    cmd.Parameters.AddWithValue("@anm", anm);
+                    cmd.Parameters.AddWithValue("@cpy", cpy);
+                    cmd.Parameters.AddWithValue("@price", price);
 
                     cmd.ExecuteNonQuery();
                     return true;
@@ -192,11 +225,7 @@ namespace Library_Manegment_system.Dao
             }
             return false;
         }
-        public bool UpdateBook(int id, string bknm, string anm)
-        {
-            throw new NotImplementedException();
-        }
-      
+        
 
     }
 }

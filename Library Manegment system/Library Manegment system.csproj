@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Library_Manegment_system</RootNamespace>
-	  <StartupObject>Library_Manegment_system.Dao.BookDaoImpl</StartupObject>
+	  <StartupObject>Library_Manegment_system.Dao.MemberDaoImpl</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
